@@ -5,31 +5,29 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 
-// Armazena clientes em memória (para teste)
+// Armazena clientes em memória (teste)
 const clientes = {};
 
 /**
- * 🔐 ROTA DE VERIFICAÇÃO DO WEBHOOK (META)
+ * 🔐 WEBHOOK VERIFICAÇÃO (META)
  */
 app.get("/webhook", (req, res) => {
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
 
-    console.log("Modo recebido:", mode);
-    console.log("Token recebido:", token);
+    console.log("Webhook verify request:", req.query);
 
     if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
         console.log("Webhook verificado com sucesso ✅");
         return res.status(200).send(challenge);
     }
 
-    console.log("Falha na verificação ❌");
     return res.sendStatus(403);
 });
 
 /**
- * 📩 RECEBER MENSAGENS DO WHATSAPP
+ * 📩 RECEBER MENSAGENS WHATSAPP
  */
 app.post("/webhook", async (req, res) => {
     try {
@@ -60,7 +58,7 @@ app.post("/webhook", async (req, res) => {
 });
 
 /**
- * 🧠 LÓGICA DO SEU BOT
+ * 🧠 LÓGICA DO BOT
  */
 async function processarFluxo(numero, mensagem) {
     if (!clientes[numero]) {
@@ -106,7 +104,7 @@ async function processarFluxo(numero, mensagem) {
 }
 
 /**
- * 👨‍💼 SIMULA DISTRIBUIÇÃO DE ATENDENTE
+ * 👨‍💼 ATENDENTES
  */
 function pegarProximoAtendente(departamento) {
     const atendentes = {
@@ -118,7 +116,7 @@ function pegarProximoAtendente(departamento) {
 }
 
 /**
- * 📤 ENVIAR MENSAGEM PARA O WHATSAPP
+ * 📤 ENVIAR MENSAGEM WHATSAPP
  */
 async function enviarMensagem(numero, texto) {
     try {
@@ -142,18 +140,14 @@ async function enviarMensagem(numero, texto) {
 
         console.log("Mensagem enviada ✅");
     } catch (error) {
-        console.error(
-            "Erro ao enviar mensagem:",
-            error.response?.data || error.message
-        );
+        console.error("Erro ao enviar mensagem:", error.response?.data || error.message);
     }
 }
 
 /**
- * 🚀 INICIAR SERVIDOR
+ * 🧪 TESTE MANUAL
  */
-
-app.get('/teste', async (req, res) => {
+app.get("/teste", async (req, res) => {
     try {
         await enviarMensagem("5511919359249", "Teste enviado com sucesso 🚀");
         res.send("Mensagem enviada com sucesso");
@@ -163,10 +157,23 @@ app.get('/teste', async (req, res) => {
     }
 });
 
-app.get('/', (req, res) => {
-  res.send('API rodando no Render ✅');
+/**
+ * ❤️ HEALTH CHECK (Render)
+ */
+app.get("/health", (req, res) => {
+    res.json({ ok: true });
 });
 
+/**
+ * 🏠 ROTA PRINCIPAL
+ */
+app.get("/", (req, res) => {
+    res.send("API rodando no Render ✅");
+});
+
+/**
+ * 🚀 START SERVER
+ */
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
