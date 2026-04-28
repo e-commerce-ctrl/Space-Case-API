@@ -153,7 +153,7 @@ async function enviarMensagem(numero, texto) {
  * 🚀 INICIAR SERVIDOR
  */
 
-app.get("/teste", async (req, res) => {
+app.get('/teste', async (req, res) => {
     try {
         await enviarMensagem("5511919359249", "Teste enviado com sucesso 🚀");
         res.send("Mensagem enviada com sucesso");
@@ -163,7 +163,12 @@ app.get("/teste", async (req, res) => {
     }
 });
 
+app.get('/', (req, res) => {
+  res.send('API rodando no Render ✅');
+});
 
-app.listen(5000, () => {
-    console.log("Servidor rodando na porta 5000 🚀");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT} 🚀`);
 });
