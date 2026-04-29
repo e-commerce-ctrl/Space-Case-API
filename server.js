@@ -179,3 +179,20 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT} 🚀`);
 });
+
+app.get("/privacy", (req, res) => {
+  res.send(`
+    <h1>Política de Privacidade</h1>
+    <p>
+      Este sistema utiliza dados fornecidos pelo usuário via WhatsApp apenas para fins de atendimento,
+      processamento de pedidos e suporte ao cliente.
+    </p>
+    <p>
+      Não compartilhamos dados com terceiros e todas as informações são usadas exclusivamente
+      para operação do sistema.
+    </p>
+    <p>
+      Última atualização: ${new Date().toLocaleDateString()}
+    </p>
+  `);
+});
